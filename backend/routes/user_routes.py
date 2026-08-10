@@ -28,9 +28,29 @@ def get_users():
 @user_bp.route("/profile",methods=["GET"])
 @jwt_required()
 def profile():
+
+  db = SessionLocal()
+
   user_id = get_jwt_identity()
 
-  return{
-    "message" : "Protected Route",
-    "user_id" : user_id
-  },200
+  user = (
+    db.query(User)
+    .filter(User.id == int(user_id))
+    .first()
+  )
+
+  if not user:
+    db.close()
+    return {
+      "message" : "User not found"
+    }, 404
+  
+  result = {
+    "id" : user.id,
+    "username" : user.username,
+    "email" : user.email
+  }
+
+  db.close()
+
+  return result, 200

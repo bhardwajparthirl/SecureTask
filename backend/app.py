@@ -5,6 +5,10 @@ from flask_jwt_extended import JWTManager
 from database import engine, Base
 from routes.user_routes import user_bp
 from routes.auth_routes import auth_bp
+from routes.task_routes import task_bp
+
+from models.user import User
+from models.task import Task
 
 app = Flask(__name__)
 
@@ -16,6 +20,7 @@ jwt = JWTManager(app)
 
 app.register_blueprint(user_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(task_bp)
 
 @app.route("/")
 
