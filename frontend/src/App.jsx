@@ -1,58 +1,86 @@
-import { useEffect, useState} from "react";
-import axios from "axios";
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    Navigate
+} from "react-router-dom";
 
-function App(){
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Tasks from "./pages/Tasks";
+import Profile from "./pages/Profile";
 
-  const [message,setMessage] = useState("");
+import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
-  const [name,setName] = useState("");
+import { AuthProvider } from "./context/AuthContext";
 
-  useEffect(()=> {
-   axios
-   .get("http://127.0.0.1:5000/")
-   .then((response) => {
-    console.log(response);
+function App() {
 
-    setMessage(response.data.message);
-   })
-   .catch((error) => {
-    console.log(error);
-   });
-  },[]);
+    return (
+        <BrowserRouter>
 
-  const handleSubmit = () => {
-    axios
-     .post("http://127.0.0.1:5000/greet",{
-      name
-     })
-     .then((response) => {
-      setMessage(response.data.message);
-     })
-     .catch((error) => {
-      console.log(error);
-     })
-  }
+            <AuthProvider>
 
-  return (
-    <div style={{padding: "20px"}}>
-      <h1>SecureTask</h1>
+                <Routes>
 
-      <input
-      type="text"
-      placeholder="Enter your name"
-      value={name}
-      onChange={(e) => setName(e.target.value)}
-      />
+                    {/* PUBLIC ROUTES */}
 
-      <br /><br />
+                    <Route
+                        path="/login"
+                        element={<Login />}
+                    />
 
-      <button onClick={handleSubmit}>
-        Submit
-      </button>
+                    <Route
+                        path="/register"
+                        element={<Register />}
+                    />
 
-      <h2>{message}</h2> 
-    </div>
-  );
+
+                    {/* PROTECTED ROUTES */}
+
+                    <Route
+                        element={
+                            <ProtectedRoute>
+                                <Layout />
+                            </ProtectedRoute>
+                        }
+                    >
+
+                        <Route
+                            path="/dashboard"
+                            element={<Dashboard />}
+                        />
+
+                        <Route
+                            path="/tasks"
+                            element={<Tasks />}
+                        />
+
+                        <Route
+                            path="/Profile"
+                            element={<Profile />}
+                        />
+
+                    </Route>
+
+
+                    {/* DEFAULT ROUTE */}
+
+                    <Route
+                        path="/"
+                        element={
+                            <Navigate to="/dashboard" />
+                        }
+                    />
+
+                </Routes>
+
+            </AuthProvider>
+
+        </BrowserRouter>
+    );
 }
 
 export default App;
