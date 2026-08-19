@@ -98,6 +98,7 @@ function CreateTask({ onTaskCreated }) {
             required
             disabled={loading}
             className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-slate-600 outline-none transition duration-300 hover:border-white/[0.14] focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 disabled:opacity-50"
+
           />
         </div>
 

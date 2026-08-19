@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
-import { useToast } from "../context/ToastContext";
 
 function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [error, setError] = useState("");
-  const { showToast } = useToast();
 
   useEffect(() => {
     const getDashboard = async () => {
@@ -364,13 +362,6 @@ function Dashboard() {
                 />
               </div>
             </div>
-
-            <button
-    onClick={() => showToast("Toast system is working!")}
-    className="px-4 py-2 bg-blue-600 text-white rounded-xl"
->
-    Test Toast
-</button>
 
             {/* Completed */}
             <div>
