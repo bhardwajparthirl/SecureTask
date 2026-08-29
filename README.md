@@ -1,294 +1,92 @@
-# 🔐 SecureTask
+# SecureTask
 
-> A secure full-stack task management application built with **Flask, PostgreSQL, React, JWT Authentication, and DevSecOps practices**.
+SecureTask is a full-stack task management application built with Flask, PostgreSQL, SQLAlchemy, React, and JWT authentication.
 
-SecureTask is being developed as part of my **Ericsson DevSecOps Internship**. The project focuses on building a secure task management platform while applying modern backend development, authentication, secure coding, and DevSecOps practices.
-
----
-
-## 🚀 Current Status
-
-**Version:** v1.0.0
-
-**Progress:** ✅ Week 1 & Week 2 Completed
-
-SecureTask currently includes a complete authentication system, protected frontend routes, task management, dashboard analytics, user profile management, and a premium responsive React interface.
+The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, and secret scanning.
 
 ---
 
-# ✨ Features
-
-## 🔐 Authentication
-
-- User Registration
-- User Login
-- Password Hashing using bcrypt
-- JWT Authentication
-- Protected Backend Routes
-- Protected React Routes
-- Persistent Login
-- Automatic JWT attachment to API requests
-- `401 Unauthorized` handling
-- Session expiration handling
-- Logout functionality
-
----
-
-## 📋 Task Management
-
-- Create Tasks
-- View Tasks
-- Edit Tasks
-- Delete Tasks
-- Delete Confirmation Modal
-- Task Status Management
-- Task Categories
-- Search Tasks
-- Filter Tasks by Category
-- Loading States
-- Success/Error Notifications
-
-### Supported Task Statuses
-
-- Pending
-- In Progress
-- Completed
-
----
-
-## 📊 Dashboard
-
-The dashboard dynamically displays:
-
-- Total Tasks
-- Pending Tasks
-- In Progress Tasks
-- Completed Tasks
-- Completion Percentage
-- Task Distribution
-
-All statistics are retrieved dynamically from the backend.
-
----
-
-## 👤 User Profile
-
-- Authenticated user information
-- Username
-- Email
-- User ID
-- Protected `/profile` endpoint
-
----
-
-## 🎨 Frontend UI/UX
-
-- Premium dark theme
-- Responsive layout
-- Sidebar navigation
-- Hover animations
-- Interactive task cards
-- Edit modal
-- Delete confirmation modal
-- Loading indicators
-- Global toast notifications
-- Responsive forms
-- Modern gradients and visual effects
-
----
-
-# 🛠 Tech Stack
-
-## Backend
-
-- Python
-- Flask
-- SQLAlchemy
-- Flask-JWT-Extended
-- Flask-CORS
-- bcrypt
-
-## Database
-
-- PostgreSQL
-- psycopg2
-
-## Frontend
-
-- React
-- React Router
-- Tailwind CSS
-- Axios
-- Vite
-
-## Authentication & Security
-
-- JWT Authentication
-- bcrypt Password Hashing
-- Protected API Routes
-- Protected React Routes
-- Axios Request Interceptors
-- Axios Response Interceptors
-- JWT `401` Handling
-- Environment Variables
-
-## Development Tools
-
-- Git
-- GitHub
-- Postman
-- VS Code
-
----
-
-# 📂 Project Structure
-
-```text
-SecureTask/
-│
-├── backend/
-│   ├── app.py
-│   ├── config.py
-│   ├── database.py
-│   ├── requirements.txt
-│   │
-│   ├── models/
-│   │   └── user.py
-│   │
-│   └── routes/
-│       ├── auth_routes.py
-│       └── user_routes.py
-│
-├── frontend/
-│   ├── package.json
-│   ├── vite.config.js
-│   │
-│   └── src/
-│       ├── api/
-│       │   └── axios.js
-│       │
-│       ├── components/
-│       │   ├── CreateTask.jsx
-│       │   ├── EditTask.jsx
-│       │   ├── Layout.jsx
-│       │   ├── ProtectedRoute.jsx
-│       │   └── Sidebar.jsx
-│       │
-│       ├── context/
-│       │   ├── AuthContext.jsx
-│       │   └── ToastContext.jsx
-│       │
-│       └── pages/
-│           ├── Dashboard.jsx
-│           ├── Login.jsx
-│           ├── Profile.jsx
-│           ├── Register.jsx
-│           └── Tasks.jsx
-│
-└── README.md
-```
-
----
-
-# ⚙️ Installation
+# Installation
 
 ## 1. Clone Repository
 
-```bash
-git clone https://github.com/bhardwajparthirl/SecureTask.git
-cd SecureTask
-```
+    git clone https://github.com/bhardwajparthirl/SecureTask.git
+    cd SecureTask
 
 ---
 
-# 🐍 Backend Setup
+# Backend Setup
 
 Navigate to the backend:
 
-```bash
-cd backend
-```
+    cd backend
 
 ## Create Virtual Environment
 
 ### Windows
 
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
+    python -m venv venv
+    venv\Scripts\activate
 
 ### Linux/macOS
 
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
+    python3 -m venv venv
+    source venv/bin/activate
 
 ## Install Dependencies
 
-```bash
-pip install -r requirements.txt
-```
+    pip install -r requirements.txt
 
 ---
 
-# 🗄️ PostgreSQL Configuration
+# PostgreSQL Configuration
 
-Create/configure your PostgreSQL database and provide the required database credentials through your environment/configuration setup.
+Create or configure your PostgreSQL database and provide the required credentials through environment variables.
 
-Do **not** commit credentials or secrets to GitHub.
+Create a `.env` file inside the `backend` directory:
 
-Example:
+    DATABASE_URL=your_database_url
+    JWT_SECRET_KEY=your_secret_key
 
-```env
-DATABASE_URL=your_database_url
-JWT_SECRET_KEY=your_secret_key
-```
+Do not commit `.env` or any credentials/secrets to GitHub.
+
+The application loads sensitive configuration through environment variables rather than hardcoding credentials in the source code.
 
 ---
 
-# ⚛️ Frontend Setup
+# Frontend Setup
 
 Open another terminal and navigate to the frontend:
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+    cd frontend
+    npm install
+    npm run dev
 
 ---
 
-# ▶️ Run Backend
+# Run Backend
 
 From the backend directory:
 
-```bash
-python app.py
-```
+    python app.py
 
 The Flask API will run on the configured backend port.
 
 ---
 
-# 📡 API Endpoints
+# API Endpoints
 
 ## Authentication
 
 ### Register
 
-```http
-POST /register
-```
+    POST /register
 
 Creates a new user account.
 
 ### Login
 
-```http
-POST /login
-```
+    POST /login
 
 Authenticates the user and returns a JWT access token.
 
@@ -298,9 +96,7 @@ Authenticates the user and returns a JWT access token.
 
 ### Get Users
 
-```http
-GET /users
-```
+    GET /users
 
 ---
 
@@ -308,9 +104,7 @@ GET /users
 
 ### Get Current User
 
-```http
-GET /profile
-```
+    GET /profile
 
 Requires JWT authentication.
 
@@ -320,31 +114,27 @@ Requires JWT authentication.
 
 ### Get Tasks
 
-```http
-GET /tasks
-```
+    GET /tasks
 
 Supports task searching and category filtering.
 
 ### Create Task
 
-```http
-POST /tasks
-```
+    POST /tasks
+
+Requires JWT authentication.
 
 ### Update Task
 
-```http
-PUT /tasks/<task_id>
-```
+    PUT /tasks/<task_id>
+
+Requires JWT authentication and verifies task ownership.
 
 ### Delete Task
 
-```http
-DELETE /tasks/<task_id>
-```
+    DELETE /tasks/<task_id>
 
-All protected task endpoints require JWT authentication.
+Requires JWT authentication and verifies task ownership.
 
 ---
 
@@ -352,127 +142,23 @@ All protected task endpoints require JWT authentication.
 
 ### Get Dashboard Statistics
 
-```http
-GET /dashboard
-```
+    GET /dashboard
 
 Returns dynamically calculated task statistics for the authenticated user.
 
 ---
 
-# 🔐 Authentication Flow
+# Security
 
-```text
-User
- │
- ▼
-Login / Register
- │
- ▼
-Email + Password
- │
- ▼
-bcrypt Password Verification
- │
- ▼
-Generate JWT
- │
- ▼
-Return Access Token
- │
- ▼
-React AuthContext
- │
- ▼
-Store JWT
- │
- ▼
-Axios Request Interceptor
- │
- ▼
-Authorization: Bearer <JWT>
- │
- ▼
-Protected Flask Routes
- │
- ▼
-Authenticated Response
-```
+Security is a core part of SecureTask development.
 
-### Expired Token Flow
-
-```text
-API Request
-    │
-    ▼
-JWT Attached
-    │
-    ▼
-Backend
-    │
-    ▼
-401 Unauthorized
-    │
-    ▼
-Clear Token
-    │
-    ▼
-Session Expired Notification
-    │
-    ▼
-Redirect to Login
-```
+The project includes manual security testing and automated static security analysis.
 
 ---
 
-# 📚 Concepts Implemented
+# Project Roadmap
 
-## Backend
-
-- Flask REST APIs
-- SQLAlchemy ORM
-- PostgreSQL Integration
-- Flask Blueprints
-- Database Sessions
-- CORS
-- HTTP Status Codes
-
-## Authentication
-
-- Password Hashing
-- bcrypt
-- JWT Authentication
-- Authentication
-- Authorization
-- Protected Routes
-- Token Persistence
-
-## Frontend
-
-- React Components
-- React Hooks
-- React Router
-- Context API
-- Axios
-- Protected Routes
-- API Interceptors
-- State Management
-- Form Handling
-
-## UI/UX
-
-- Responsive Design
-- Tailwind CSS
-- Modal Interfaces
-- Loading States
-- Toast Notifications
-- Hover Animations
-
----
-
-# 🗺️ Project Roadmap
-
-## ✅ Week 1 — Foundation & Authentication
+## Week 1 - Foundation and Authentication
 
 - [x] Environment Setup
 - [x] Flask Project
@@ -481,13 +167,13 @@ Redirect to Login
 - [x] Git Setup
 - [x] User Registration
 - [x] User Login
-- [x] bcrypt
+- [x] bcrypt Password Hashing
 - [x] JWT Authentication
 - [x] Protected Backend Routes
 
 ---
 
-## ✅ Week 2 — Full-Stack Task Management
+## Week 2 - Full-Stack Task Management
 
 - [x] Task CRUD APIs
 - [x] React Frontend
@@ -501,114 +187,194 @@ Redirect to Login
 - [x] JWT Request Interceptor
 - [x] JWT 401 Handling
 - [x] Toast Notification System
-- [x] Premium Responsive UI
+- [x] Responsive UI
 
 ---
 
-## 🔒 Week 3 — Security Testing
+## Week 3 - Security Testing
 
-Planned security exercises:
+### Manual Security Testing
 
-- [ ] SQL Injection
-- [ ] XSS
-- [ ] Hardcoded Secrets
-- [ ] Weak Hashing
-- [ ] Authentication Bypass
-- [ ] Directory Traversal
-- [ ] Insecure File Upload
-- [ ] Verbose Error Messages
+- [x] SQL Injection Testing
+- [x] Cross-Site Scripting (XSS) Testing
+- [x] Hardcoded Secret Testing
+- [x] Password Hashing Verification
+- [x] Authentication Bypass Testing
+- [x] IDOR / Authorization Testing
+- [x] Verbose Error Handling Testing
+- [x] Directory Traversal Assessment
+- [x] Insecure File Upload Assessment
 
----
+### Week 3 Results
 
-## 🛡️ Week 4 — SAST
+- SQL Injection: PASS
+- XSS: PASS
+- Hardcoded Secrets: PASS
+- Password Hashing: PASS
+- Authentication Bypass: PASS
+- IDOR / Authorization: PASS
+- Verbose Error Handling: PASS
+- Directory Traversal: Not Applicable
+- Insecure File Upload: Not Applicable
 
-Planned security tooling:
-
-- [ ] Bandit
-- [ ] Semgrep
-- [ ] Gitleaks
-- [ ] Static Application Security Testing
-- [ ] Security Findings Documentation
-
----
-
-## 📦 Week 5 — Dependency Security
-
-- [ ] pip-audit
-- [ ] Safety
-- [ ] OWASP Dependency Check
-- [ ] CVE Analysis
-- [ ] Dependency Updates
+Directory traversal and insecure file upload were marked Not Applicable because the current application does not provide user-controlled filesystem paths or file-upload functionality.
 
 ---
 
-## 🌐 Week 6 — Dynamic Security Testing
+## Week 4 - Static Application Security Testing
 
-- [ ] OWASP ZAP
-- [ ] Passive Scanning
-- [ ] Active Scanning
-- [ ] Session Testing
-- [ ] Authentication Testing
-- [ ] Security Headers
+### Security Tools
+
+- [x] Bandit
+- [x] Semgrep OSS
+- [x] Gitleaks
+- [x] Static Application Security Testing
+- [x] Security Findings Documentation
+
+### Bandit
+
+Bandit was used to perform static security analysis of the Python backend.
+
+The initial scan identified:
+
+- B105 - Hardcoded Password String
+- B201 - Flask Debug Mode Enabled
+
+Both findings were remediated.
+
+The JWT secret was moved from application source code to environment-based configuration.
+
+Flask debug mode was changed from:
+
+    debug=True
+
+to:
+
+    debug=False
+
+A subsequent Bandit scan returned:
+
+    High: 0
+    Medium: 0
+    Low: 0
+
+### Semgrep
+
+Semgrep OSS was used for additional static security analysis.
+
+Results:
+
+    Rules executed: 290
+    Targets scanned: 12
+    Findings: 0
+    Blocking findings: 0
+
+The scan used the Semgrep OSS rules available without authentication. Additional Semgrep Code and Supply Chain rules were not included.
+
+### Gitleaks
+
+Gitleaks was used to scan the Git repository for accidentally committed secrets.
+
+Results:
+
+    Commits scanned: 9
+    Repository data scanned: approximately 279.90 KB
+    Leaks found: 0
+
+The scan included Git history, helping verify that secrets were not present in previous commits.
+
+### Week 4 Final Results
+
+| Security Tool | Result |
+|---|---|
+| Bandit | 0 findings after remediation |
+| Semgrep OSS | 0 findings |
+| Gitleaks | 0 leaks |
+
+Week 4 SAST and secret scanning: COMPLETE
 
 ---
 
-## 🔧 Week 7 — Vulnerability Remediation
+# Security Documentation
 
-- [ ] Vulnerability Remediation
-- [ ] Secure Coding Improvements
-- [ ] Input Validation
-- [ ] Secure File Uploads
-- [ ] Security Headers
-- [ ] Logging Improvements
-- [ ] Re-scan & Validation
+Security testing results and vulnerability assessments are documented in:
 
----
+    docs/security/test-results.md
+    docs/security/vulnerability-report.md
 
-## 📄 Week 8 — Finalization
-
-- [ ] Final Documentation
-- [ ] Vulnerability Matrix
-- [ ] Installation Guide
-- [ ] Screenshots
-- [ ] Security Report
-- [ ] Final Presentation
+These documents contain detailed security testing evidence, findings, remediation steps, and assessment results.
 
 ---
 
-# 🎯 Future Enhancements
+# Technology Stack
 
-- [ ] Email Verification
-- [ ] Password Reset
-- [ ] Refresh Tokens
-- [ ] Docker Support
-- [ ] CI/CD Pipeline
-- [ ] Deployment
-- [ ] Role-Based Authorization
-- [ ] Automated Testing
+## Backend
+
+- Python
+- Flask
+- SQLAlchemy
+- PostgreSQL
+- Flask-JWT-Extended
+- bcrypt
+
+## Frontend
+
+- React
+- Axios
+- Tailwind CSS
+
+## Security
+
+- Bandit
+- Semgrep
+- Gitleaks
+- bcrypt
+- JWT Authentication
 
 ---
 
-# 👨‍💻 Author
+# Project Structure
+
+    SecureTask/
+    |
+    ├── backend/
+    │   ├── models/
+    │   ├── routes/
+    │   ├── app.py
+    │   ├── config.py
+    │   ├── database.py
+    │   ├── requirements.txt
+    │   └── .env
+    |
+    ├── frontend/
+    │   └── src/
+    |
+    ├── docs/
+    │   └── security/
+    │       ├── test-results.md
+    │       └── vulnerability-report.md
+    |
+    ├── .gitignore
+    └── README.md
+
+---
+
+# Current Progress
+
+| Week | Focus | Status |
+|---|---|---|
+| Week 1 | Foundation and Authentication | Complete |
+| Week 2 | Full-Stack Task Management | Complete |
+| Week 3 | Manual Security Testing | Complete |
+| Week 4 | SAST and Secret Scanning | Complete |
+| Week 5 | Dependency Security | Planned |
+
+---
+
+# Author
 
 **Parthak Bhardwaj**
 
-B.Tech Computer Science — Artificial Intelligence
+B.Tech Computer Science - Artificial Intelligence
 
 Backend Developer | Full-Stack Developer | Python
-
----
-
-# ⭐ Project Status
-
-🚧 **Currently in Active Development**
-
-### Completed
-
-**Week 1 — Foundation & Authentication** ✅
-
-**Week 2 — Full-Stack Task Management** ✅
-
-### Next Milestone
-
-**Week 3 — Security Testing & Vulnerability Assessment** 🔒

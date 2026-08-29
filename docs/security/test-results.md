@@ -67,3 +67,83 @@
 **Result:** No Python traceback, database credentials, filesystem paths, or other sensitive internal details were exposed.
 
 **Status:** PASS
+
+---
+
+## Week 4 — SAST & Secret Scanning
+
+### Bandit
+
+**Tool:** Bandit 1.9.4
+
+**Initial Scan:**
+- Scope: SecureTask backend
+- Virtual environment excluded
+- Lines scanned: 342
+- High severity: 1
+- Medium severity: 0
+- Low severity: 1
+
+**Findings:**
+
+1. **B105 — Hardcoded Password String**
+   - Location: `backend/app.py`
+   - Issue: JWT secret was hardcoded in application source code.
+   - Remediation: Moved the JWT secret to environment configuration and loaded it through `config.py`.
+
+2. **B201 — Flask Debug Enabled**
+   - Location: `backend/app.py`
+   - Issue: Flask application was running with `debug=True`.
+   - Remediation: Changed Flask configuration to `debug=False`.
+
+**Final Scan:**
+- High severity: 0
+- Medium severity: 0
+- Low severity: 0
+
+**Status:** PASS
+
+---
+
+### Semgrep
+
+**Tool:** Semgrep 1.175.0
+
+**Configuration:** Semgrep OSS `auto` configuration.
+
+**Results:**
+- Rules executed: 290
+- Targets scanned: 12
+- Findings: 0
+- Blocking findings: 0
+
+**Status:** PASS
+
+**Scope Note:** The scan used Semgrep OSS. Additional Semgrep Code/Supply Chain rules were not included because the CLI was not authenticated.
+
+---
+
+### Gitleaks
+
+**Tool:** Gitleaks 8.30.1
+
+**Test:** Git repository secret scanning.
+
+**Results:**
+- Git commits scanned: 9
+- Repository data scanned: approximately 279.90 KB
+- Leaks found: 0
+
+**Status:** PASS
+
+---
+
+## Week 4 Summary
+
+| Security Tool | Result |
+|---|---|
+| Bandit | PASS — 0 findings after remediation |
+| Semgrep OSS | PASS — 0 findings |
+| Gitleaks | PASS — 0 leaks |
+
+**Week 4 SAST & Secret Scanning: COMPLETE**

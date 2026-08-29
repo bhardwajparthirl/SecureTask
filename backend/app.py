@@ -10,9 +10,11 @@ from routes.task_routes import task_bp
 from models.user import User
 from models.task import Task
 
+from config import DATABASE_URL, JWT_SECRET_KEY
+
 app = Flask(__name__)
 
-app.config["JWT_SECRET_KEY"] = "REMOVED_JWT_SECRET"
+app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 
 CORS(app)
 
@@ -30,4 +32,4 @@ def home():
 Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=False)
