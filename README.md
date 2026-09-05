@@ -2,7 +2,7 @@
 
 SecureTask is a full-stack task management application built with Flask, PostgreSQL, SQLAlchemy, React, and JWT authentication.
 
-The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, and secret scanning.
+The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, secret scanning, and dependency security assessment.
 
 ---
 
@@ -152,7 +152,7 @@ Returns dynamically calculated task statistics for the authenticated user.
 
 Security is a core part of SecureTask development.
 
-The project includes manual security testing and automated static security analysis.
+The project includes manual security testing, automated static security analysis, secret scanning, and dependency security assessment.
 
 ---
 
@@ -295,6 +295,76 @@ Week 4 SAST and secret scanning: COMPLETE
 
 ---
 
+## Week 5 - Dependency Security
+
+### Security Tools
+
+- [x] OWASP Dependency-Check
+- [x] pip-audit
+- [x] Safety
+- [x] Dependency Vulnerability Analysis
+- [x] Security Findings Documentation
+
+### OWASP Dependency-Check
+
+OWASP Dependency-Check was used to analyze project dependencies for known vulnerabilities.
+
+Results:
+
+    CVE Count: 0
+    Highest Severity: 0
+
+Status:
+
+    PASS
+
+### pip-audit
+
+pip-audit 2.10.1 was used to audit the application's Python dependencies.
+
+Application dependency scan:
+
+    pip-audit -r backend/requirements.txt
+
+Result:
+
+    No known vulnerabilities found
+
+Status:
+
+    PASS
+
+An additional vulnerability was identified when auditing the complete development virtual environment. The affected package was `nltk 3.10.3`, which is installed as a dependency of the Safety security-scanning tool and is not part of SecureTask's application requirements.
+
+This finding does not represent a known vulnerability in SecureTask's declared application dependencies.
+
+### Safety
+
+Safety 3.8.1 was used to scan the Python dependencies and development environment.
+
+Results:
+
+    requirements.txt: No issues found
+    venv/pyvenv.cfg: No issues found
+
+The complete environment contained one policy-ignored vulnerability. No scan-failing vulnerabilities were reported.
+
+Status:
+
+    PASS for application dependencies
+
+### Week 5 Final Results
+
+| Security Tool | Result |
+|---|---|
+| OWASP Dependency-Check | 0 CVEs |
+| pip-audit | 0 vulnerabilities in application dependencies |
+| Safety | 0 issues in application dependencies |
+
+Week 5 dependency security assessment: COMPLETE
+
+---
+
 # Security Documentation
 
 Security testing results and vulnerability assessments are documented in:
@@ -328,6 +398,9 @@ These documents contain detailed security testing evidence, findings, remediatio
 - Bandit
 - Semgrep
 - Gitleaks
+- OWASP Dependency-Check
+- pip-audit
+- Safety
 - bcrypt
 - JWT Authentication
 
@@ -367,7 +440,7 @@ These documents contain detailed security testing evidence, findings, remediatio
 | Week 2 | Full-Stack Task Management | Complete |
 | Week 3 | Manual Security Testing | Complete |
 | Week 4 | SAST and Secret Scanning | Complete |
-| Week 5 | Dependency Security | Planned |
+| Week 5 | Dependency Security | Complete |
 
 ---
 
