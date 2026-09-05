@@ -147,3 +147,93 @@
 | Gitleaks | PASS — 0 leaks |
 
 **Week 4 SAST & Secret Scanning: COMPLETE**
+
+## Week 5 - Dependency Security Assessment
+
+### 1. OWASP Dependency-Check
+
+Tool: OWASP Dependency-Check
+
+Scope:
+- Frontend and backend project dependencies
+
+Result:
+- Scan completed successfully
+- HTML report generated at `dependency-check-report/dependency-check-report.html`
+- CVE count observed in the report: 0
+- Highest severity: 0
+
+Status: PASS
+
+---
+
+### 2. pip-audit
+
+Tool: pip-audit 2.10.1
+
+Application dependency audit:
+
+Command:
+`pip-audit -r backend/requirements.txt`
+
+Result:
+- No known vulnerabilities found
+
+Status: PASS
+
+Environment audit:
+
+Command:
+`pip-audit`
+
+Result:
+- 1 known vulnerability found in `nltk 3.10.3`
+- Vulnerability ID: `PYSEC-2026-3740`
+- NLTK is not listed in the application's `requirements.txt`
+- NLTK is installed as a dependency of the Safety security-scanning tool
+
+Status: Informational / Tooling Dependency Finding
+
+No SecureTask application dependency was identified as vulnerable by pip-audit.
+
+---
+
+### 3. Safety
+
+Tool: Safety 3.8.1
+
+Application dependency scan:
+
+Command:
+`safety scan`
+
+Result:
+- `requirements.txt`: No issues found
+- `venv/pyvenv.cfg`: No issues found
+- Safety reported 1 vulnerability in the complete environment
+- The vulnerability was ignored by the active Safety policy
+- No scan-failing vulnerabilities were matched
+- Exit code: 0
+
+Status: PASS for application dependencies
+
+Note:
+The Safety scan operates on the development environment as well as the project requirements. The identified environment-level finding is associated with a tooling dependency rather than a SecureTask runtime dependency.
+
+---
+
+### Week 5 Summary
+
+| Tool | Scope | Result | Status |
+|------|-------|--------|--------|
+| OWASP Dependency-Check | Project dependencies | 0 CVEs | PASS |
+| pip-audit | SecureTask requirements.txt | 0 vulnerabilities | PASS |
+| pip-audit | Complete virtual environment | 1 tooling dependency finding | INFORMATIONAL |
+| Safety | SecureTask requirements.txt | 0 issues | PASS |
+| Safety | Complete virtual environment | 1 policy-ignored finding | INFORMATIONAL |
+
+Conclusion:
+
+No known vulnerabilities were identified in SecureTask's declared application dependencies.
+
+The additional NLTK finding exists in the development virtual environment because NLTK is required by the Safety security-scanning tool. It is not a declared SecureTask application dependency, so no application dependency remediation was required.
