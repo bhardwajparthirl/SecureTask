@@ -2,7 +2,21 @@
 
 SecureTask is a full-stack task management application built with Flask, PostgreSQL, SQLAlchemy, React, and JWT authentication.
 
-The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, secret scanning, and dependency security assessment.
+The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, secret scanning, dependency security assessment, and secure deployment.
+
+---
+
+# Live Demo
+
+**Live Application:** https://secure-task-chi.vercel.app
+
+SecureTask is deployed as a full-stack application using:
+
+- Frontend: Vercel
+- Backend: Render
+- Database: Neon PostgreSQL
+
+The live application can be accessed using the link above.
 
 ---
 
@@ -71,6 +85,65 @@ From the backend directory:
     python app.py
 
 The Flask API will run on the configured backend port.
+
+For production deployment, the Flask application is served using Gunicorn.
+
+---
+
+# Deployment
+
+SecureTask is deployed using a separated frontend, backend, and database architecture.
+
+## Deployment Architecture
+
+    React Frontend
+          |
+          | HTTPS API Requests
+          v
+    Flask Backend
+       Render
+          |
+          | PostgreSQL
+          v
+    Neon PostgreSQL
+
+## Deployment Platforms
+
+### Frontend
+
+The React frontend is deployed on Vercel.
+
+Live URL:
+
+    https://secure-task-chi.vercel.app
+
+### Backend
+
+The Flask backend is deployed on Render using Gunicorn.
+
+Backend URL:
+
+    https://securetask-backend.onrender.com
+
+### Database
+
+The application uses managed PostgreSQL hosted on Neon.
+
+Sensitive database credentials are provided through environment variables and are not stored in the Git repository.
+
+## Production Configuration
+
+The deployed application uses:
+
+- Flask with `debug=False`
+- Gunicorn as the production WSGI server
+- Environment-based database configuration
+- Environment-based JWT secret configuration
+- HTTPS communication between frontend and backend
+- Vercel SPA routing configuration
+- Managed PostgreSQL database
+
+The deployed application was tested end-to-end including registration, login, dashboard access, task creation, task retrieval, task update, task deletion, database persistence, and frontend route refresh.
 
 ---
 
@@ -152,7 +225,7 @@ Returns dynamically calculated task statistics for the authenticated user.
 
 Security is a core part of SecureTask development.
 
-The project includes manual security testing, automated static security analysis, secret scanning, and dependency security assessment.
+The project includes manual security testing, automated static security analysis, secret scanning, dependency security assessment, and deployment security verification.
 
 ---
 
@@ -382,6 +455,7 @@ These documents contain detailed security testing evidence, findings, remediatio
 
 - Python
 - Flask
+- Gunicorn
 - SQLAlchemy
 - PostgreSQL
 - Flask-JWT-Extended
@@ -392,6 +466,18 @@ These documents contain detailed security testing evidence, findings, remediatio
 - React
 - Axios
 - Tailwind CSS
+- Vite
+
+## Database
+
+- PostgreSQL
+- Neon
+
+## Deployment
+
+- Vercel
+- Render
+- Neon PostgreSQL
 
 ## Security
 
@@ -413,6 +499,8 @@ These documents contain detailed security testing evidence, findings, remediatio
     ├── backend/
     │   ├── models/
     │   ├── routes/
+    │   ├── services/
+    │   ├── utils/
     │   ├── app.py
     │   ├── config.py
     │   ├── database.py
@@ -420,7 +508,9 @@ These documents contain detailed security testing evidence, findings, remediatio
     │   └── .env
     |
     ├── frontend/
-    │   └── src/
+    │   ├── src/
+    │   ├── vercel.json
+    │   └── .env
     |
     ├── docs/
     │   └── security/
@@ -429,6 +519,8 @@ These documents contain detailed security testing evidence, findings, remediatio
     |
     ├── .gitignore
     └── README.md
+
+Note: `.env` files are local environment configuration files and are excluded from Git tracking.
 
 ---
 
@@ -441,6 +533,7 @@ These documents contain detailed security testing evidence, findings, remediatio
 | Week 3 | Manual Security Testing | Complete |
 | Week 4 | SAST and Secret Scanning | Complete |
 | Week 5 | Dependency Security | Complete |
+| Deployment | Vercel + Render + Neon | Complete |
 
 ---
 
