@@ -20,3 +20,7 @@ backend/safety-report.json
 # Security scan reports
 dependency-check-report/
 backend/safety-report.json
+
+.sonar/
+
+.sonar/

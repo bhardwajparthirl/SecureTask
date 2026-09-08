@@ -148,66 +148,68 @@
 
 **Week 4 SAST & Secret Scanning: COMPLETE**
 
-## Week 5 - Dependency Security Assessment
+---
 
-### 1. OWASP Dependency-Check
+# Week 5 — Dependency Security & SonarQube Assessment
 
-Tool: OWASP Dependency-Check
+## 1. OWASP Dependency-Check
 
-Scope:
+**Tool:** OWASP Dependency-Check
+
+**Scope:**
 - Frontend and backend project dependencies
 
-Result:
+**Result:**
 - Scan completed successfully
 - HTML report generated at `dependency-check-report/dependency-check-report.html`
 - CVE count observed in the report: 0
 - Highest severity: 0
 
-Status: PASS
+**Status:** PASS
 
 ---
 
-### 2. pip-audit
+## 2. pip-audit
 
-Tool: pip-audit 2.10.1
+**Tool:** pip-audit 2.10.1
 
-Application dependency audit:
+### Application dependency audit
 
-Command:
+**Command:**
 `pip-audit -r backend/requirements.txt`
 
-Result:
+**Result:**
 - No known vulnerabilities found
 
-Status: PASS
+**Status:** PASS
 
-Environment audit:
+### Environment audit
 
-Command:
+**Command:**
 `pip-audit`
 
-Result:
+**Result:**
 - 1 known vulnerability found in `nltk 3.10.3`
 - Vulnerability ID: `PYSEC-2026-3740`
 - NLTK is not listed in the application's `requirements.txt`
 - NLTK is installed as a dependency of the Safety security-scanning tool
 
-Status: Informational / Tooling Dependency Finding
+**Status:** Informational / Tooling Dependency Finding
 
 No SecureTask application dependency was identified as vulnerable by pip-audit.
 
 ---
 
-### 3. Safety
+## 3. Safety
 
-Tool: Safety 3.8.1
+**Tool:** Safety 3.8.1
 
-Application dependency scan:
+### Application dependency scan
 
-Command:
+**Command:**
 `safety scan`
 
-Result:
+**Result:**
 - `requirements.txt`: No issues found
 - `venv/pyvenv.cfg`: No issues found
 - Safety reported 1 vulnerability in the complete environment
@@ -215,25 +217,137 @@ Result:
 - No scan-failing vulnerabilities were matched
 - Exit code: 0
 
-Status: PASS for application dependencies
+**Status:** PASS for application dependencies
 
-Note:
+**Note:**
 The Safety scan operates on the development environment as well as the project requirements. The identified environment-level finding is associated with a tooling dependency rather than a SecureTask runtime dependency.
 
 ---
 
-### Week 5 Summary
+# 4. SonarQube
+
+**Tool:** SonarQube Community Build 26.9.0.129388
+
+**Scanner:** PySonar 1.8.0.5390
+
+**Scope:**
+- SecureTask backend
+- SecureTask frontend
+- Python
+- JavaScript
+- CSS
+- JSON
+- Web files
+
+**Analysis command:**
+`pysonar --sonar-host-url=http://localhost:9000 --sonar-token=$env:SONAR_TOKEN --sonar-project-key=SecureTask`
+
+### Initial Analysis
+
+The initial SonarQube analysis detected:
+
+- Total issues: 43
+- Security vulnerabilities: 2
+- Reliability issues: 32
+- Maintainability issues: 23
+- Coverage: 0.0%
+- Quality Gate: Passed
+
+The two security vulnerabilities were related to:
+
+1. **CSRF protection**
+   - Location: `backend/app.py`
+   - Rule: `python:S4502`
+   - Severity: Critical
+   - Issue: SonarQube detected that CSRF protection was not explicitly configured.
+
+2. **Permissive CORS**
+   - Location: `backend/app.py`
+   - Rule: `python:S5122`
+   - Severity: Major
+   - Issue: CORS configuration was overly permissive.
+
+---
+
+## CORS Remediation
+
+### Original configuration
+
+The backend initially used:
+
+`CORS(app)`
+
+This allowed a broad CORS configuration.
+
+### Remediation
+
+The CORS configuration was restricted to the trusted production frontend origin:
+
+`https://secure-task-chi.vercel.app`
+
+### Validation
+
+A request using the trusted frontend origin returned:
+
+`Access-Control-Allow-Origin: https://secure-task-chi.vercel.app`
+
+A request using an untrusted origin:
+
+`https://evil-example.com`
+
+returned no `Access-Control-Allow-Origin` header.
+
+**Result:** Untrusted cross-origin access was rejected while the trusted frontend remained allowed.
+
+**Status:** PASS
+
+---
+
+## SonarQube Final Analysis
+
+After remediation, SonarQube was run again.
+
+**Final results:**
+- Total issues: 41
+- Security vulnerabilities: 0
+- Critical vulnerabilities: 0
+- Major vulnerabilities: 0
+- Quality Gate: Passed
+- New issues: 0
+- Code coverage: 0.0%
+- Duplications: 0.0%
+
+The remaining issues were primarily code-quality and reliability findings rather than security vulnerabilities.
+
+**Status:** PASS
+
+### SonarQube Scope Note
+
+The SonarQube Community Build displayed a warning that its security analysis is limited compared with higher SonarQube editions. In particular, the Community Build does not provide the full set of critical injection vulnerability analyses such as SQL injection and XSS.
+
+Therefore, SonarQube results are considered an additional security/code-quality layer and are not a replacement for the manual security testing, Bandit, Semgrep, Gitleaks, dependency auditing, and other security checks performed in SecureTask.
+
+---
+
+# Week 5 Summary
 
 | Tool | Scope | Result | Status |
-|------|-------|--------|--------|
+|---|---|---|---|
 | OWASP Dependency-Check | Project dependencies | 0 CVEs | PASS |
-| pip-audit | SecureTask requirements.txt | 0 vulnerabilities | PASS |
+| pip-audit | SecureTask `requirements.txt` | 0 vulnerabilities | PASS |
 | pip-audit | Complete virtual environment | 1 tooling dependency finding | INFORMATIONAL |
-| Safety | SecureTask requirements.txt | 0 issues | PASS |
+| Safety | SecureTask dependencies | 0 issues | PASS |
 | Safety | Complete virtual environment | 1 policy-ignored finding | INFORMATIONAL |
+| SonarQube | Backend + frontend | 0 security vulnerabilities after remediation | PASS |
 
-Conclusion:
+## Week 5 Security Conclusion
 
 No known vulnerabilities were identified in SecureTask's declared application dependencies.
 
 The additional NLTK finding exists in the development virtual environment because NLTK is required by the Safety security-scanning tool. It is not a declared SecureTask application dependency, so no application dependency remediation was required.
+
+SonarQube identified security configuration issues related to CSRF and permissive CORS configuration. The CORS configuration was remediated by restricting the trusted origin, and the fix was validated using HTTP requests from both trusted and untrusted origins.
+
+The final SonarQube analysis reported **0 security vulnerabilities** and a **passed Quality Gate**.
+
+**Week 5 — Dependency Security & SonarQube Assessment: COMPLETE**

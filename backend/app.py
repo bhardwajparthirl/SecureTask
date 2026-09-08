@@ -16,7 +16,13 @@ app = Flask(__name__)
 
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 
-CORS(app)
+ALLOWED_ORIGINS = [
+    "https://secure-task-chi.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
+
+CORS(app, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
 
 jwt = JWTManager(app)
 

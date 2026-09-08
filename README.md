@@ -2,7 +2,7 @@
 
 SecureTask is a full-stack task management application built with Flask, PostgreSQL, SQLAlchemy, React, and JWT authentication.
 
-The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, secret scanning, dependency security assessment, and secure deployment.
+The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, secret scanning, dependency security assessment, code quality analysis, and secure deployment.
 
 ---
 
@@ -140,6 +140,7 @@ The deployed application uses:
 - Environment-based database configuration
 - Environment-based JWT secret configuration
 - HTTPS communication between frontend and backend
+- Restricted CORS configuration
 - Vercel SPA routing configuration
 - Managed PostgreSQL database
 
@@ -225,7 +226,7 @@ Returns dynamically calculated task statistics for the authenticated user.
 
 Security is a core part of SecureTask development.
 
-The project includes manual security testing, automated static security analysis, secret scanning, dependency security assessment, and deployment security verification.
+The project includes manual security testing, automated static security analysis, secret scanning, dependency security assessment, code quality analysis, and deployment security verification.
 
 ---
 
@@ -368,14 +369,16 @@ Week 4 SAST and secret scanning: COMPLETE
 
 ---
 
-## Week 5 - Dependency Security
+## Week 5 - Dependency Security and Code Quality
 
 ### Security Tools
 
 - [x] OWASP Dependency-Check
 - [x] pip-audit
 - [x] Safety
+- [x] SonarQube Community Build
 - [x] Dependency Vulnerability Analysis
+- [x] Static Code Quality Analysis
 - [x] Security Findings Documentation
 
 ### OWASP Dependency-Check
@@ -426,6 +429,29 @@ Status:
 
     PASS for application dependencies
 
+### SonarQube
+
+SonarQube Community Build was used for additional static code quality and security analysis of the backend and frontend.
+
+The initial analysis identified two security findings:
+
+- CSRF protection finding: Reviewed and marked as a false positive because SecureTask uses JWT authentication through the Authorization header rather than cookie-based authentication.
+- Permissive CORS policy: Confirmed as a valid security finding and remediated by restricting allowed origins.
+
+CORS was changed from a permissive configuration to an explicit allowlist containing the production frontend and local development origins.
+
+Trusted-origin validation confirmed that the production frontend receives the appropriate CORS header, while an untrusted origin does not receive `Access-Control-Allow-Origin`.
+
+Final SonarQube results:
+
+    Security Vulnerabilities: 0
+    Critical Vulnerabilities: 0
+    Major Vulnerabilities: 0
+    New Issues: 0
+    Quality Gate: Passed
+
+SonarQube is used as an additional security and code-quality layer alongside manual security testing, Bandit, Semgrep, Gitleaks, and dependency scanning.
+
 ### Week 5 Final Results
 
 | Security Tool | Result |
@@ -433,8 +459,9 @@ Status:
 | OWASP Dependency-Check | 0 CVEs |
 | pip-audit | 0 vulnerabilities in application dependencies |
 | Safety | 0 issues in application dependencies |
+| SonarQube | 0 security vulnerabilities after remediation |
 
-Week 5 dependency security assessment: COMPLETE
+Week 5 dependency security and code quality assessment: COMPLETE
 
 ---
 
@@ -487,6 +514,7 @@ These documents contain detailed security testing evidence, findings, remediatio
 - OWASP Dependency-Check
 - pip-audit
 - Safety
+- SonarQube Community Build
 - bcrypt
 - JWT Authentication
 
@@ -532,7 +560,8 @@ Note: `.env` files are local environment configuration files and are excluded fr
 | Week 2 | Full-Stack Task Management | Complete |
 | Week 3 | Manual Security Testing | Complete |
 | Week 4 | SAST and Secret Scanning | Complete |
-| Week 5 | Dependency Security | Complete |
+| Week 5 | Dependency Security and Code Quality | Complete |
+| Week 6 | Controlled Vulnerability Research and Remediation | Upcoming |
 | Deployment | Vercel + Render + Neon | Complete |
 
 ---
@@ -543,4 +572,4 @@ Note: `.env` files are local environment configuration files and are excluded fr
 
 B.Tech Computer Science - Artificial Intelligence
 
-Backend Developer | Full-Stack Developer | Python
+Backend Developer | Full-Stack Developer
