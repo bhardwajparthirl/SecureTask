@@ -2,7 +2,7 @@
 
 SecureTask is a full-stack task management application built with Flask, PostgreSQL, SQLAlchemy, React, and JWT authentication.
 
-The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, secret scanning, dependency security assessment, code quality analysis, and secure deployment.
+The project is being developed with a security-first approach, including authentication, authorization, password hashing, security testing, SAST, secret scanning, dependency security assessment, code quality analysis, Dynamic Application Security Testing (DAST), and secure deployment.
 
 ---
 
@@ -73,7 +73,13 @@ The application loads sensitive configuration through environment variables rath
 Open another terminal and navigate to the frontend:
 
     cd frontend
+
+Install dependencies:
+
     npm install
+
+Run the development server:
+
     npm run dev
 
 ---
@@ -101,7 +107,6 @@ SecureTask is deployed using a separated frontend, backend, and database archite
           | HTTPS API Requests
           v
     Flask Backend
-       Render
           |
           | PostgreSQL
           v
@@ -226,7 +231,70 @@ Returns dynamically calculated task statistics for the authenticated user.
 
 Security is a core part of SecureTask development.
 
-The project includes manual security testing, automated static security analysis, secret scanning, dependency security assessment, code quality analysis, and deployment security verification.
+The project follows a security-first approach with manual security testing, controlled vulnerability testing, static analysis, secret scanning, dependency vulnerability assessment, code-quality analysis, Dynamic Application Security Testing (DAST), and runtime verification.
+
+## Security Tools
+
+- Bandit
+- Semgrep OSS
+- Gitleaks
+- OWASP Dependency-Check
+- pip-audit
+- Safety
+- SonarQube Community Build
+- OWASP ZAP
+- bcrypt
+- JWT Authentication
+
+## Security Assessment
+
+SecureTask underwent a structured security assessment following:
+
+**Scan → Detection → Analysis → Remediation → Re-scan → Verification → Outcome**
+
+The assessment covered:
+
+- SQL Injection testing
+- Cross-Site Scripting (XSS)
+- Authentication bypass
+- IDOR / authorization
+- Password hashing
+- Hardcoded secret detection
+- CORS security
+- Dependency vulnerabilities
+- Static code analysis
+- Secret scanning
+- Dynamic application security testing with OWASP ZAP
+- Input validation and error handling
+- Runtime security verification
+
+## Security Results
+
+- Bandit: 0 findings after remediation
+- Semgrep OSS: 0 findings
+- Gitleaks: 0 leaks
+- OWASP Dependency-Check: 0 vulnerabilities after remediation
+- pip-audit: 0 vulnerabilities in application dependencies
+- Safety: 0 vulnerabilities in application dependencies
+- SonarQube: 0 security vulnerabilities after remediation
+- OWASP ZAP: DAST findings reviewed and application-specific issues remediated
+
+During the security assessment, controlled vulnerabilities were intentionally introduced in a test environment to verify that security tools could detect them. The vulnerable configurations were removed and remediated before the final application state.
+
+The assessment also identified a dependency vulnerability in the transitive `nanoid` package. The affected version was upgraded from `3.3.17` to `3.3.18`, after which OWASP Dependency-Check reported zero vulnerable dependencies.
+
+OWASP ZAP identified multiple alerts during Dynamic Application Security Testing. Relevant findings were manually analyzed and triaged. An application-specific password input-handling issue was identified where excessively long passwords could cause a bcrypt exception. Explicit 72-byte password validation was added to prevent the server-side error and return a controlled HTTP 400 response.
+
+## Security Documentation
+
+Detailed security testing results and vulnerability analysis are available in:
+
+- [Security Test Results](docs/security/test-results.md)
+- [Security Vulnerability Report](docs/security/vulnerability-report.md)
+
+Security evidence and screenshots are maintained in:
+
+    docs/security/evidence/
 
 ---
 
@@ -338,8 +406,8 @@ Semgrep OSS was used for additional static security analysis.
 
 Results:
 
-    Rules executed: 290
-    Targets scanned: 12
+    Rules executed: 459
+    Targets scanned: 46
     Findings: 0
     Blocking findings: 0
 
@@ -351,8 +419,8 @@ Gitleaks was used to scan the Git repository for accidentally committed secrets.
 
 Results:
 
-    Commits scanned: 9
-    Repository data scanned: approximately 279.90 KB
+    Commits scanned: 17
+    Repository data scanned: approximately 317.45 KB
     Leaks found: 0
 
 The scan included Git history, helping verify that secrets were not present in previous commits.
@@ -385,10 +453,21 @@ Week 4 SAST and secret scanning: COMPLETE
 
 OWASP Dependency-Check was used to analyze project dependencies for known vulnerabilities.
 
-Results:
+The initial assessment identified a Medium-severity vulnerability in the transitive `nanoid` dependency.
 
-    CVE Count: 0
-    Highest Severity: 0
+The affected version:
+
+    nanoid 3.3.17
+
+was upgraded to:
+
+    nanoid 3.3.18
+
+The final Dependency-Check assessment reported:
+
+    Vulnerable dependencies: 0
+    Vulnerabilities: 0
+    Suppressed vulnerabilities: 0
 
 Status:
 
@@ -396,7 +475,7 @@ Status:
 
 ### pip-audit
 
-pip-audit 2.10.1 was used to audit the application's Python dependencies.
+pip-audit was used to audit the application's Python dependencies.
 
 Application dependency scan:
 
@@ -410,33 +489,34 @@ Status:
 
     PASS
 
-An additional vulnerability was identified when auditing the complete development virtual environment. The affected package was `nltk 3.10.3`, which is installed as a dependency of the Safety security-scanning tool and is not part of SecureTask's application requirements.
+An additional vulnerability was identified when auditing the complete development virtual environment. The affected package was `nltk 3.10.3`, which is associated with security-scanning tooling and is not part of SecureTask's declared application requirements.
 
 This finding does not represent a known vulnerability in SecureTask's declared application dependencies.
 
 ### Safety
 
-Safety 3.8.1 was used to scan the Python dependencies and development environment.
+Safety was used to assess the Python dependencies and development environment.
 
-Results:
+Application dependency result:
 
-    requirements.txt: No issues found
-    venv/pyvenv.cfg: No issues found
-
-The complete environment contained one policy-ignored vulnerability. No scan-failing vulnerabilities were reported.
+    0 vulnerabilities reported
+    0 vulnerabilities ignored
+    No known security vulnerabilities reported
 
 Status:
 
     PASS for application dependencies
 
+A separate scan of the complete development environment identified one policy-ignored vulnerability associated with development/tooling dependencies. It was not a declared SecureTask runtime dependency.
+
 ### SonarQube
 
 SonarQube Community Build was used for additional static code quality and security analysis of the backend and frontend.
 
-The initial analysis identified two security findings:
+The initial analysis identified two security-related findings:
 
-- CSRF protection finding: Reviewed and marked as a false positive because SecureTask uses JWT authentication through the Authorization header rather than cookie-based authentication.
-- Permissive CORS policy: Confirmed as a valid security finding and remediated by restricting allowed origins.
+- CSRF protection finding: reviewed and classified as a false positive because SecureTask uses JWT authentication through the `Authorization: Bearer` header rather than cookie-based authentication.
+- Permissive CORS policy: confirmed as a valid security finding and remediated by restricting allowed origins.
 
 CORS was changed from a permissive configuration to an explicit allowlist containing the production frontend and local development origins.
 
@@ -456,12 +536,104 @@ SonarQube is used as an additional security and code-quality layer alongside man
 
 | Security Tool | Result |
 |---|---|
-| OWASP Dependency-Check | 0 CVEs |
+| OWASP Dependency-Check | 0 vulnerabilities after remediation |
 | pip-audit | 0 vulnerabilities in application dependencies |
-| Safety | 0 issues in application dependencies |
+| Safety | 0 vulnerabilities in application dependencies |
 | SonarQube | 0 security vulnerabilities after remediation |
 
 Week 5 dependency security and code quality assessment: COMPLETE
+
+---
+
+# Week 6/7 - Dynamic Security Testing and Vulnerability Remediation
+
+### OWASP ZAP
+
+OWASP ZAP was used to perform Dynamic Application Security Testing (DAST) against the locally running SecureTask application.
+
+The assessment covered:
+
+- SecureTask frontend
+- SecureTask backend API
+- Authentication-related requests
+- Authenticated API traffic
+- Input handling
+- HTTP security headers
+- Session-related responses
+- Cross-domain behavior
+
+The local testing environment used:
+
+    Frontend: http://localhost:5173
+    Backend: http://127.0.0.1:5000
+
+### ZAP Initial Scan
+
+The Active Scan generated:
+
+    Requests: 3,465
+    Alert instances: 86
+    Distinct alert types: 19
+
+The 86 alert instances represent individual alert occurrences, while 19 represents the distinct alert categories identified.
+
+All relevant alerts were reviewed and triaged rather than treating every scanner-generated alert as a confirmed vulnerability.
+
+### ZAP Vulnerability Analysis
+
+The most significant application-specific issue identified during the assessment involved excessively long password input.
+
+An oversized password caused bcrypt to raise an exception, resulting in an HTTP 500 response.
+
+The root cause was missing input validation before bcrypt processing.
+
+### Remediation
+
+Explicit password byte-length validation was added to the registration and login flows.
+
+Passwords exceeding 72 bytes are now rejected with a controlled HTTP 400 response.
+
+The remediation prevents oversized password input from reaching bcrypt and eliminates the server-side exception.
+
+### Verification
+
+The oversized-password test was repeated after remediation.
+
+The application returned:
+
+    400 Bad Request
+
+with controlled validation behavior rather than exposing a server traceback.
+
+### Additional ZAP Findings
+
+ZAP also identified and documented several other observations, including:
+
+- Server version information
+- X-Content-Type-Options header observations
+- CSP Header Not Set
+- Cross-Domain Misconfiguration
+- Information Disclosure involving browser localStorage
+- Information Disclosure involving sensitive information in a local development URL
+- Session Management Response Identified
+- Additional informational and systemic observations
+
+These findings were manually reviewed and categorized according to their actual applicability.
+
+Some observations were informational, development-environment related, systemic, or associated with third-party resources rather than confirmed SecureTask backend vulnerabilities.
+
+### Week 6/7 Final Results
+
+| Security Area | Result |
+|---|---|
+| OWASP ZAP DAST | Findings reviewed and triaged |
+| Password-Length Handling | Remediated and verified |
+| Format String Error | Analyzed and addressed through input validation |
+| CSP Header Observation | Reviewed |
+| Cross-Domain Observation | Reviewed |
+| Informational Findings | Reviewed and documented |
+
+Week 6/7 Dynamic Security Testing and Vulnerability Remediation: COMPLETE
 
 ---
 
@@ -471,6 +643,10 @@ Security testing results and vulnerability assessments are documented in:
 
     docs/security/test-results.md
     docs/security/vulnerability-report.md
+
+Security evidence and screenshots are maintained in:
+
+    docs/security/evidence/
 
 These documents contain detailed security testing evidence, findings, remediation steps, and assessment results.
 
@@ -509,12 +685,13 @@ These documents contain detailed security testing evidence, findings, remediatio
 ## Security
 
 - Bandit
-- Semgrep
+- Semgrep OSS
 - Gitleaks
 - OWASP Dependency-Check
 - pip-audit
 - Safety
 - SonarQube Community Build
+- OWASP ZAP
 - bcrypt
 - JWT Authentication
 
@@ -542,6 +719,7 @@ These documents contain detailed security testing evidence, findings, remediatio
     |
     ├── docs/
     │   └── security/
+    │       ├── evidence/
     │       ├── test-results.md
     │       └── vulnerability-report.md
     |
@@ -561,7 +739,7 @@ Note: `.env` files are local environment configuration files and are excluded fr
 | Week 3 | Manual Security Testing | Complete |
 | Week 4 | SAST and Secret Scanning | Complete |
 | Week 5 | Dependency Security and Code Quality | Complete |
-| Week 6 | Controlled Vulnerability Research and Remediation | Upcoming |
+| Week 6/7 | Dynamic Security Testing, Vulnerability Research and Remediation | Complete |
 | Deployment | Vercel + Render + Neon | Complete |
 
 ---
