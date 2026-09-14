@@ -27,6 +27,10 @@ def register():
     return {"error": "Email is required"},400
   if not password:
     return {"error": "Password is required"},400
+  if len(password.encode("utf-8")) > 72:
+    return {
+      "error": "Password must be 72 bytes or fewer"
+    },400
 
   # 4.Open DB Session
   db = SessionLocal()
@@ -86,6 +90,10 @@ def login():
     return {
        "error" : "password is required"
        },400
+  if len(password.encode("utf-8")) > 72:
+    return {
+      "error": "Password must be 72 bytes or fewer"
+    },400
 
   # 4.Open DB Session
   db = SessionLocal()
