@@ -1,566 +1,413 @@
-# SecureTask Security Test Results
-
-## Week 3 — Manual Security Testing
-
-### XSS
-
-**Test:** Submitted XSS payloads through task fields.
-
-**Payloads:**
-
-- `<script>alert("XSS")</script>`
-- `<img src=x onerror=alert("XSS")>`
-
-**Result:** The backend accepted the values as data and the React frontend rendered the payloads as text. JavaScript did not execute.
-
-**Status:** PASS
-
-**Evidence:**
-
-![XSS API Test](evidence/12-xss-test.png)
-
-![XSS Frontend Rendering](evidence/13-xss-frontend-rendering.png)
-
 ---
 
-### IDOR / Authorization
+# Week 6/7 — Dynamic Application Security Testing (OWASP ZAP)
 
-**Test:** User A attempted to modify a task belonging to User B.
+## 1. OWASP ZAP Assessment
 
-**Result:** The application returned `404 - Task not found or not authorised`.
+**Tool:** OWASP ZAP (Zed Attack Proxy)
 
-**Status:** PASS
+OWASP ZAP was used to perform Dynamic Application Security Testing (DAST) against the locally running SecureTask application.
 
-**Evidence:**
-
-![IDOR Authorization](evidence/15-idor-authorization-pass.png)
-
----
-
-### SQL Injection
-
-**Test:** SQL injection-style input was submitted to the login endpoint.
-
-**Result:** The application returned `401 Unauthorized` and did not authenticate the request.
-
-**Status:** PASS
-
-**Evidence:**
-
-![SQL Injection Test](evidence/11-sql-injection-test.png)
-
----
-
-### Authentication Bypass
-
-**Test:** Attempted to access a protected endpoint without an Authorization header.
-
-**Result:** The application returned `401 Unauthorized` with `Missing Authorization Header`.
-
-**Status:** PASS
-
-**Evidence:**
-
-![Authentication Bypass](evidence/14-authentication-bypass.png)
-
----
-
-### Password Hashing
-
-**Test:** Inspected the authentication implementation and database password values.
-
-**Result:** Passwords are stored as bcrypt hashes rather than plaintext values.
-
-**Status:** PASS
-
-**Evidence:**
-
-![Password Hashing Verification](evidence/19-password-hashing-verification.png)
-
----
-
-### Invalid Task ID
-
-**Test:** Submitted a request using a non-existent task ID.
-
-**Result:** The application returned a controlled `404` response without exposing internal information.
-
-**Status:** PASS
-
-**Evidence:**
-
-![Invalid Task ID](evidence/17-invalid-task-id.png)
-
----
-
-### Malformed JSON
-
-**Test:** Submitted malformed JSON to an API endpoint.
-
-**Result:** The application returned a controlled error response without exposing sensitive internal information.
-
-**Status:** PASS
-
-**Evidence:**
-
-![Malformed JSON](evidence/18-malformed-json.png)
-
----
-
-### Verbose Error Handling
-
-**Tests:**
-
-1. Non-existent endpoint
-2. Malformed JSON
-3. Invalid task ID
-
-**Result:** No Python traceback, database credentials, filesystem paths, source-code details, or other sensitive internal information were exposed.
-
-**Status:** PASS
-
-**Evidence:**
-
-![Verbose Error Handling](evidence/20-verbose-error-handling.png)
-
----
-
-### Directory Traversal
-
-**Test:** Reviewed the backend for file/path handling functionality.
-
-**Result:** No user-controlled filesystem path or file download functionality exists.
-
-**Status:** N/A
-
----
-
-### Insecure File Upload
-
-**Test:** Reviewed the backend for file-upload functionality.
-
-**Result:** No file-upload endpoint exists.
-
-**Status:** N/A
-
----
-
-## Week 3 Summary
-
-| Security Test | Result |
-|---|---|
-| SQL Injection | PASS |
-| XSS | PASS |
-| Authentication Bypass | PASS |
-| IDOR / Authorization | PASS |
-| Password Hashing | PASS |
-| Invalid Task ID | PASS |
-| Malformed JSON | PASS |
-| Verbose Error Handling | PASS |
-| Directory Traversal | N/A |
-| Insecure File Upload | N/A |
-
-**Week 3 Manual Security Testing: COMPLETE**
-
----
-
-# Week 4 — SAST & Secret Scanning
-
-## Bandit
-
-**Tool:** Bandit 1.9.4
-
-### Initial Scan
-
-- Scope: SecureTask backend
-- Virtual environment excluded
-- High severity: 1
-- Medium severity: 0
-- Low severity: 1
-
-### Findings
-
-#### B105 — Hardcoded Password String
-
-- Location: `backend/app.py`
-- Issue: A credential-like value was present in application source code during controlled testing.
-- Remediation: The hardcoded test value was removed and sensitive configuration remained environment-based.
-
-#### B201 — Flask Debug Enabled
-
-- Location: `backend/app.py`
-- Issue: Flask was configured with `debug=True`.
-- Remediation: Flask configuration was changed to `debug=False`.
-
-### Final Scan
-
-- High severity: 0
-- Medium severity: 0
-- Low severity: 0
-
-**Status:** PASS
-
-**Evidence:**
-
-![Bandit Detection](evidence/02-bandit-detection.png)
-
-![Bandit Re-scan](evidence/04-bandit-rescan.png)
-
----
-
-## Semgrep OSS
-
-**Tool:** Semgrep OSS
-
-**Configuration:** Semgrep OSS `auto` configuration.
-
-### Final Results
-
-- Rules executed: **459**
-- Targets scanned: **46**
-- Findings: **0**
-- Blocking findings: **0**
-
-**Status:** PASS
-
-**Evidence:**
-
-![Semgrep Final Scan](evidence/21-semgrep-final-scan.png)
-
-**Scope Note:** The scan used Semgrep OSS. Additional Semgrep Code/Supply Chain rules were not included because the CLI was not authenticated for those features.
-
----
-
-## Gitleaks
-
-**Tool:** Gitleaks 8.30.1
-
-**Test:** Git repository secret scanning.
-
-### Final Results
-
-- Git commits scanned: **17**
-- Repository data scanned: approximately **317.45 KB**
-- Leaks found: **0**
-
-**Status:** PASS
-
-**Evidence:**
-
-![Gitleaks Final Scan](evidence/22-gitleaks-final-scan.png)
-
----
-
-## Week 4 Summary
-
-| Security Tool | Result |
-|---|---|
-| Bandit | PASS — 0 findings after remediation |
-| Semgrep OSS | PASS — 0 findings |
-| Gitleaks | PASS — 0 leaks |
-
-**Week 4 SAST & Secret Scanning: COMPLETE**
-
----
-
-# Week 5 — Dependency Security & SonarQube Assessment
-
-## 1. OWASP Dependency-Check
-
-**Tool:** OWASP Dependency-Check 12.1.0
+The assessment was performed against the local development environment rather than the production deployment.
 
 ### Scope
 
-- Backend `requirements.txt`
-- Frontend `package-lock.json`
+The ZAP assessment covered:
 
-### Initial Scan
-
-The initial dependency assessment identified one vulnerable frontend dependency:
-
-| Dependency | Version | Severity | Vulnerability |
-|---|---:|---|---|
-| `nanoid` | 3.3.17 | Medium | GHSA-2v37-7h3g-55p8 |
-
-The affected version range was below `3.3.18`.
-
-The vulnerability was associated with CWE-835 (Infinite Loop).
-
-**Status:** FINDING IDENTIFIED
-
-**Evidence:**
-
-![Dependency-Check Detection](evidence/23-dependency-check-detection.png)
-
-### Analysis
-
-The vulnerable dependency was a transitive frontend dependency:
-
-`vite → postcss → nanoid`
-
-The installed version `3.3.17` was within the affected version range.
-
-### Remediation
-
-The dependency was updated using:
-
-`npm update nanoid`
-
-The resulting installed version was:
-
-`nanoid@3.3.18`
-
-The updated version is outside the affected version range.
-
-### Re-scan
-
-OWASP Dependency-Check was executed again after remediation.
-
-### Final Result
-
-- Dependencies scanned: **150 (72 unique)**
-- Vulnerable dependencies: **0**
-- Vulnerabilities found: **0**
-- Vulnerabilities suppressed: **0**
-
-**Status:** PASS
-
-**Evidence:**
-
-![Dependency-Check Re-scan](evidence/24-dependency-check-rescan.png)
-
-### Outcome
-
-The detected `nanoid` vulnerability was successfully remediated and was no longer reported during the final Dependency-Check scan.
-
----
-
-## 2. pip-audit
-
-**Tool:** pip-audit
-
-### Application Dependency Audit
-
-**Command:**
-
-`pip-audit -r backend\requirements.txt`
-
-**Result:**
-
-`No known vulnerabilities found`
-
-**Status:** PASS
-
-**Evidence:**
-
-![pip-audit Final Scan](evidence/25-pip-audit-final-scan.png)
-
-### Environment Audit
-
-A separate audit of the complete development virtual environment previously identified an NLTK-related vulnerability.
-
-- Package: `nltk 3.10.3`
-- Vulnerability ID: `PYSEC-2026-3740`
-- NLTK is not listed in the application's `backend\requirements.txt`
-- The package was present as a dependency of security-scanning tooling
-
-**Status:** Informational / Tooling Dependency Finding
-
-No SecureTask application dependency was identified as vulnerable by the application requirements audit.
-
----
-
-## 3. Safety
-
-**Tool:** Safety 3.8.1
-
-### Application Dependency Check
-
-**Command:**
-
-`safety check -r backend\requirements.txt`
-
-**Result:**
-
-- 0 vulnerabilities reported
-- 0 vulnerabilities ignored
-- No known security vulnerabilities reported
-
-**Status:** PASS
-
-**Evidence:**
-
-![Safety Final Scan](evidence/26-safety-final-scan.png)
-
-### Environment Scan Note
-
-A separate `safety scan` of the complete development project/environment identified one vulnerability that was ignored by the active Safety policy.
-
-This finding was associated with the development/tooling environment rather than a declared SecureTask runtime dependency.
-
-Therefore, the Safety result for the application's declared backend dependencies is considered PASS.
-
----
-
-# 4. SonarQube
-
-**Tool:** SonarQube Community Build 26.9.0.129388
-
-**Scanner:** PySonar 1.8.0.5390
-
-### Scope
-
-- SecureTask backend
 - SecureTask frontend
-- Python
-- JavaScript
-- CSS
-- JSON
-- Web files
+- SecureTask backend API
+- Authentication-related requests
+- Authenticated API traffic
+- Login functionality
+- Task-related API traffic
+- HTTP security headers
+- Input handling
+- Session-related responses
+- Cross-domain behavior
 
-### Initial Analysis
+### Test Environment
 
-The initial SonarQube analysis detected:
+Frontend:
 
-- Total issues: **43**
-- Security vulnerabilities: **2**
-- Reliability issues: **32**
-- Maintainability issues: **23**
-- Coverage: **0.0%**
-- Quality Gate: **Passed**
+`http://localhost:5173`
 
-Two security-related findings required analysis.
+Backend:
 
-### Security Finding 1 — CSRF Protection
+`http://127.0.0.1:5000`
 
-- Location: `backend/app.py`
-- Rule: `python:S4502`
-- Severity: Critical
-
-**Issue:** SonarQube reported that CSRF protection was not explicitly configured.
-
-### Analysis
-
-The finding was reviewed against the application's authentication architecture.
-
-SecureTask uses JWT authentication through the explicit:
-
-`Authorization: Bearer`
-
-HTTP header rather than browser cookies.
-
-Therefore, the finding was classified as a **false positive** for the implemented authentication architecture.
-
-No cookie-based CSRF mechanism was added because it was not required by the implemented JWT authentication model.
-
-**Outcome:** Reviewed and classified as False Positive
+The local frontend was temporarily configured to communicate with the local backend during the DAST assessment.
 
 ---
 
-### Security Finding 2 — Permissive CORS
+## 2. ZAP Scan Workflow
 
-- Location: `backend/app.py`
-- Rule: `python:S5122`
-- Severity: Major
+The assessment followed the security lifecycle:
 
-**Issue:** CORS configuration was overly permissive.
+**Scan → Detection → Analysis → Remediation → Re-scan → Verification → Outcome**
 
-### Original Configuration
+The workflow included:
 
-`CORS(app)`
+1. Launching OWASP ZAP.
+2. Configuring the local SecureTask application as the testing target.
+3. Capturing normal application traffic.
+4. Capturing authenticated application traffic.
+5. Running an OWASP ZAP Active Scan against the local backend.
+6. Reviewing generated alerts.
+7. Manually validating relevant findings.
+8. Identifying application-specific root causes.
+9. Applying remediation where required.
+10. Re-testing the affected behavior.
+11. Documenting the results and evidence.
 
-### Remediation
+---
 
-The CORS configuration was restricted to explicitly trusted origins:
+## 3. Initial ZAP Scan
 
-- `https://secure-task-chi.vercel.app`
-- `http://localhost:5173`
-- `http://127.0.0.1:5173`
+The initial ZAP assessment was performed against the local SecureTask backend.
+
+### Initial Results
+
+- Requests generated: **3,465**
+- Alert instances: **86**
+- Distinct alert types: **19**
+
+The distinction between alert instances and distinct alert types is important. The 86 figure represents individual alert occurrences generated during the scan, while 19 represents the different categories of alerts identified.
+
+**Status:** FINDINGS IDENTIFIED
 
 **Evidence:**
 
-![SonarQube CORS Detection](evidence/06-sonarqube-cors-detection.png)
+![ZAP Initial Scan](evidence/27-zap-initial-scan.png)
 
-![CORS Remediation](evidence/07-cors-remediation.png)
+![ZAP Active Scan](evidence/30-zap-active-scan.png)
 
-### Runtime Validation
+![ZAP Active Scan Complete](evidence/33-zap-active-scan-complete.png)
 
-A request using the trusted frontend origin returned:
+![ZAP Alert Overview](evidence/34-zap-alert-overview.png)
 
-`Access-Control-Allow-Origin: https://secure-task-chi.vercel.app`
+---
 
-The trusted frontend was therefore allowed.
+## 4. ZAP Application Traffic Analysis
 
-![Trusted Origin Verification](evidence/09-trusted-origin.png)
+Normal application traffic was captured through the ZAP browser environment.
 
-A request using an untrusted origin did not receive an `Access-Control-Allow-Origin` header.
+### Server Version Detection
 
-The untrusted origin was therefore not granted CORS permission.
-
-![Untrusted Origin Verification](evidence/10-untrusted-origin.png)
-
-### Re-scan
-
-After remediation, SonarQube was executed again.
-
-### Final Results
-
-- Total issues: **41**
-- Security vulnerabilities: **0**
-- Critical vulnerabilities: **0**
-- Major vulnerabilities: **0**
-- New issues: **0**
-- Quality Gate: **Passed**
-- Code coverage: **0.0%**
-- Duplications: **0.0%**
-
-**Status:** PASS
+ZAP identified server version information in HTTP responses.
 
 **Evidence:**
 
-![SonarQube Re-scan](evidence/08-sonarqube-rescan.png)
+![ZAP Server Version Detection](evidence/28-zap-server-version-detection.png)
 
-### SonarQube Scope Note
+This finding was treated as an information-disclosure/hardening observation rather than a confirmed exploitable application vulnerability.
 
-The SonarQube Community Build provides a more limited security analysis compared with higher SonarQube editions.
+### X-Content-Type-Options
 
-Therefore, SonarQube results are treated as an additional security and code-quality layer and are not considered a replacement for manual security testing, Bandit, Semgrep, Gitleaks, dependency auditing, and runtime security verification.
+ZAP also identified an X-Content-Type-Options related header issue.
+
+**Evidence:**
+
+![ZAP X-Content-Type-Options Detection](evidence/29-zap-x-content-type-options-detection.png)
+
+This was treated as a security-header hardening observation.
+
+### Authenticated Traffic
+
+Authenticated application traffic was captured to allow ZAP to observe protected application functionality.
+
+**Evidence:**
+
+![ZAP Authenticated Traffic](evidence/31-zap-authenticated-traffic.png)
+
+### Local API Traffic
+
+The local backend API traffic generated by SecureTask was also captured and reviewed.
+
+**Evidence:**
+
+![ZAP Local API Traffic](evidence/32-zap-local-api-traffic.png)
 
 ---
 
-# Week 5 Summary
+# 5. ZAP Finding — Buffer Overflow / Password-Length Handling
 
-| Tool | Scope | Result | Status |
-|---|---|---|---|
-| OWASP Dependency-Check | Backend + frontend dependencies | 0 vulnerabilities after remediation | PASS |
-| pip-audit | SecureTask `requirements.txt` | 0 vulnerabilities | PASS |
-| pip-audit | Complete virtual environment | 1 tooling dependency finding | INFORMATIONAL |
-| Safety | SecureTask `requirements.txt` | 0 vulnerabilities | PASS |
-| Safety | Complete environment | 1 policy-ignored finding | INFORMATIONAL |
-| SonarQube | Backend + frontend | 0 security vulnerabilities after remediation | PASS |
+## Detection
+
+OWASP ZAP identified a Medium-severity Buffer Overflow alert associated with input submitted to the authentication endpoint.
+
+**Severity:** Medium
+
+The finding was manually investigated to determine whether it represented an actual application-level issue.
+
+**Evidence:**
+
+![ZAP Buffer Overflow Analysis](evidence/35-zap-buffer-overflow-analysis.png)
+
+![ZAP Buffer Overflow Request](evidence/36-zap-buffer-overflow-request.png)
+
+![ZAP Buffer Overflow Alert](evidence/37-zap-buffer-overflow-alert.png)
 
 ---
 
-# Week 5 Security Conclusion
+## Analysis
 
-The dependency security assessment identified one Medium-severity vulnerability in the transitive `nanoid` dependency.
+Manual reproduction showed that an excessively long password submitted to the login endpoint caused the backend to return an HTTP 500 response.
 
-The affected version `3.3.17` was upgraded to `3.3.18`, and the subsequent OWASP Dependency-Check re-scan reported zero vulnerable dependencies and zero vulnerabilities.
+The underlying exception originated from bcrypt password verification because bcrypt does not accept passwords beyond its supported 72-byte input limit.
 
-The application dependency audits performed with pip-audit and Safety reported no known vulnerabilities in the declared backend requirements.
+The application therefore lacked explicit validation of the password length before passing the value to bcrypt.
 
-Additional environment-level findings were identified in development tooling dependencies. These were not declared SecureTask runtime dependencies and were therefore treated as informational tooling findings.
+The issue was classified as an input-validation and robustness problem rather than treating the ZAP alert label alone as the final root cause.
 
-SonarQube initially identified two security-related findings. The CSRF finding was reviewed and classified as a false positive based on the application's JWT header-based authentication architecture. The permissive CORS vulnerability was remediated by restricting access to trusted origins and verified using both trusted and untrusted HTTP origins.
+---
 
-The final SonarQube analysis reported:
+## Remediation
 
-**0 security vulnerabilities**
+Password byte-length validation was added before bcrypt processing in both registration and login handling.
 
-**0 Critical vulnerabilities**
+Passwords exceeding 72 bytes are now rejected with a controlled HTTP 400 response.
 
-**0 Major vulnerabilities**
+The application therefore prevents oversized password input from reaching the bcrypt verification function.
 
-**Quality Gate: Passed**
+**Evidence:**
 
-**Week 5 — Dependency Security & SonarQube Assessment: COMPLETE**
+![ZAP Buffer Overflow Remediation](evidence/42-zap-buffer-overflow-remediated.png)
+
+---
+
+## Verification
+
+After remediation, the same oversized-password test was repeated.
+
+The application returned:
+
+`400 Bad Request`
+
+with the controlled validation message:
+
+`Password must be 72 bytes or fewer`
+
+No Python traceback or bcrypt exception was exposed to the client.
+
+This confirmed that the original 500-error behavior was removed and the input was handled through explicit validation.
+
+**Status:** REMEDIATED AND VERIFIED
+
+---
+
+# 6. ZAP Finding — Format String Error
+
+## Detection
+
+ZAP also reported a Medium-severity Format String Error alert involving the password parameter.
+
+**Evidence:**
+
+![ZAP Format String Error](evidence/40-zap-format-string-error.png)
+
+---
+
+## Root-Cause Analysis
+
+Manual analysis showed that the observed server error was associated with the same oversized password condition identified during investigation of the Buffer Overflow alert.
+
+The underlying bcrypt limitation was the relevant application-level cause.
+
+**Evidence:**
+
+![ZAP Format String Root Cause](evidence/41-zap-format-string-root-cause.png)
+
+---
+
+## Remediation and Verification
+
+The same password byte-length validation introduced for the Buffer Overflow finding prevents oversized password values from reaching bcrypt.
+
+The affected input is now rejected with a controlled HTTP 400 response rather than producing a server-side exception.
+
+**Status:** ANALYZED, REMEDIATED THROUGH INPUT VALIDATION, AND VERIFIED
+
+---
+
+# 7. ZAP Finding — CSP Header Not Set
+
+ZAP identified a Medium-severity CSP Header Not Set alert.
+
+**Evidence:**
+
+![ZAP CSP Header Missing](evidence/38-zap-csp-header-missing.png)
+
+The finding was reviewed as a security-header hardening issue.
+
+The alert was documented as part of the DAST assessment rather than being classified as a confirmed exploitable application vulnerability.
+
+**Status:** REVIEWED / HARDENING OBSERVATION
+
+---
+
+# 8. ZAP Finding — Cross-Domain Misconfiguration
+
+ZAP identified a Cross-Domain Misconfiguration alert.
+
+**Evidence:**
+
+![ZAP Cross-Domain Misconfiguration](evidence/39-zap-cross-domain-misconfiguration.png)
+
+The alert was reviewed manually. The observed cross-domain behavior involved an external resource such as Google Fonts rather than representing an unrestricted SecureTask backend CORS policy.
+
+SecureTask's backend CORS configuration had already been restricted to explicitly trusted application origins and had been verified using both trusted and untrusted Origin headers.
+
+**Status:** REVIEWED / NOT TREATED AS A CONFIRMED SECURETASK BACKEND VULNERABILITY
+
+---
+
+# 9. Informational ZAP Findings
+
+ZAP also generated several informational findings during the assessment.
+
+These findings were reviewed individually rather than automatically treating every scanner alert as a confirmed vulnerability.
+
+### Information Disclosure — Browser localStorage
+
+ZAP identified the application's JWT access token being stored in browser localStorage.
+
+**Evidence:**
+
+![ZAP Browser localStorage Information Disclosure](evidence/44-zap-localstorage-information-disclosure.png)
+
+This was recorded as an informational security observation related to client-side token storage.
+
+---
+
+### Information Disclosure — Sensitive Information in URL
+
+ZAP identified a token value in a local development URL.
+
+**Evidence:**
+
+![ZAP Sensitive Information in URL](evidence/45-zap-sensitive-info-url.png)
+
+The observation was associated with the local Vite/React development environment rather than the SecureTask backend authentication API.
+
+It was therefore treated as a development-environment observation and not classified as a confirmed production authentication vulnerability.
+
+---
+
+### Session Management Response Identified
+
+ZAP identified a session-management response associated with the login endpoint and JWT authentication response.
+
+**Evidence:**
+
+![ZAP Session Management Response](evidence/46-zap-session-management-token.png)
+
+The evidence screenshot was sanitized before repository inclusion so that authentication token values were not retained as repository evidence.
+
+The finding represents ZAP's identification of the application's authentication token response rather than a confirmed vulnerability by itself.
+
+**Status:** INFORMATIONAL
+
+---
+
+# 10. Additional Informational / Systemic Findings
+
+The ZAP assessment also reported informational or systemic observations involving development tooling and external resources.
+
+Examples included:
+
+- Suspicious Comments
+- Modern Web Application
+- Re-examine Cache-control Directives
+- Retrieved from Cache
+- User Agent Fuzzer
+- Authentication Request Identified
+- Additional security-header observations
+
+These findings were reviewed and were not automatically classified as exploitable SecureTask vulnerabilities.
+
+Some observations originated from the local Vite/React development environment or third-party resources rather than the SecureTask backend application.
+
+---
+
+# 11. ZAP Evidence Summary
+
+| Screenshot | Evidence |
+|---|---|
+| 27 | ZAP initial scan |
+| 28 | ZAP server version detection |
+| 29 | ZAP X-Content-Type-Options detection |
+| 30 | ZAP Active Scan |
+| 31 | ZAP authenticated traffic |
+| 32 | ZAP local API traffic |
+| 33 | ZAP Active Scan complete |
+| 34 | ZAP alert overview |
+| 35 | ZAP Buffer Overflow analysis |
+| 36 | ZAP Buffer Overflow request |
+| 37 | ZAP Buffer Overflow alert |
+| 38 | ZAP CSP Header Not Set |
+| 39 | ZAP Cross-Domain Misconfiguration |
+| 40 | ZAP Format String Error |
+| 41 | ZAP Format String Error root-cause analysis |
+| 42 | ZAP Buffer Overflow remediation |
+| 43 | ZAP Active Scan complete |
+| 44 | ZAP Information Disclosure — browser localStorage |
+| 45 | ZAP Information Disclosure — sensitive information in URL |
+| 46 | ZAP Session Management Response Identified |
+
+---
+
+# 12. Week 6/7 Security Outcome
+
+OWASP ZAP successfully performed dynamic security testing against the locally running SecureTask application.
+
+The assessment generated multiple alerts across different severity levels. The alerts were reviewed individually to distinguish confirmed application issues from informational, systemic, development-environment, and third-party observations.
+
+The most significant application-specific issue identified during the assessment was excessive password input causing a server-side bcrypt exception and HTTP 500 response.
+
+The root cause was identified as missing password byte-length validation before bcrypt processing.
+
+The issue was remediated by adding explicit 72-byte password validation to the registration and login flows.
+
+After remediation, the same oversized input returned a controlled HTTP 400 response without exposing a server traceback.
+
+The ZAP Format String Error was also analyzed and found to have the same underlying bcrypt password-length root cause. The input-validation remediation addressed this behavior as well.
+
+The CSP Header Not Set and Cross-Domain Misconfiguration findings were reviewed and documented as hardening or contextual observations rather than confirmed exploitable SecureTask backend vulnerabilities.
+
+Informational findings involving browser localStorage, development URLs, and session-management responses were documented for security awareness and were not treated as confirmed vulnerabilities without additional evidence.
+
+**Week 6/7 OWASP ZAP Dynamic Security Assessment: COMPLETE**
+
+---
+
+# 13. Updated Security Assessment Status
+
+| Security Area | Result | Status |
+|---|---|---|
+| Manual Security Testing | Security controls verified | PASS |
+| Bandit | 0 findings after remediation | PASS |
+| Semgrep OSS | 0 findings | PASS |
+| Gitleaks | 0 leaks | PASS |
+| OWASP Dependency-Check | 0 vulnerabilities after remediation | PASS |
+| pip-audit | 0 vulnerabilities in application dependencies | PASS |
+| Safety | 0 vulnerabilities in application dependencies | PASS |
+| SonarQube | 0 security vulnerabilities after remediation | PASS |
+| OWASP ZAP | Findings reviewed and application-specific issue remediated | PASS |
+| Runtime CORS Verification | Trusted origin allowed; untrusted origin rejected | PASS |
+| Password-Length Validation | Oversized input controlled with HTTP 400 | PASS |
+
+---
+
+# 14. Final Security Lifecycle
+
+The complete security assessment followed:
+
+**Scan → Detection → Analysis → Remediation → Re-scan → Verification → Outcome**
+
+The controlled vulnerabilities, dependency vulnerability, CORS issue, and ZAP-detected input-handling issue were analyzed and remediated where applicable.
+
+Scanner-generated alerts were manually reviewed to avoid incorrectly classifying informational or contextual observations as confirmed vulnerabilities.
+
+The final SecureTask application state contains the implemented security remediations and documented evidence from the completed security assessment.
+
+**Overall Security Assessment Status: PASS**
