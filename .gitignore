@@ -24,3 +24,14 @@ backend/safety-report.json
 .sonar/
 
 .sonar/
+
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
